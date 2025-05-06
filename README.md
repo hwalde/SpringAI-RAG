@@ -1,4 +1,4 @@
-# KVB-KI-Schulung-SpringAI
+# SpringAI RAG
 
 Eine Retrieval Augmented Generation (RAG) Anwendung mit Spring AI, PostgreSQL und pgvector.
 
