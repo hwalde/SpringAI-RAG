@@ -30,7 +30,7 @@ public interface InformationRepository extends JpaRepository<Information, UUID> 
                 0.3 * (1 - (content_embedding <=> CAST(:queryEmbeddingString AS vector))) AS combined_score
             FROM information
             WHERE
-                (1 - (title_embedding <=> CAST(:queryEmbeddingString AS vector))) > 0.5 OR
+                (1 - (title_embedding <=> CAST(:queryEmbeddingString AS vector))) > 0.1 OR
                 (1 - (content_embedding <=> CAST(:queryEmbeddingString AS vector))) > 0.5
             ORDER BY combined_score DESC
             LIMIT :limit

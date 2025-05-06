@@ -25,15 +25,6 @@ public class RagService {
         this.informationService = informationService;
     }
 
-    /**
-     * This method is no longer needed as embeddings are generated
-     * when Information objects are saved.
-     */
-    public void indexAllInformation() {
-        // No-op - embeddings are now generated when Information objects are saved
-        // This method is kept for backward compatibility
-    }
-
     public String generatePrompt(String question) {
         // Step 1: Find relevant information using vector similarity search
         List<Information> relevantInfo = informationService.findSimilarInformation(question, 5);
@@ -50,6 +41,8 @@ public class RagService {
 
         return String.format("""
                 Du bist ein KI-Assistent, der Fragen basierend auf bereitgestellten Informationen beantwortet. Deine Aufgabe ist es, die gegebene Frage ausschließlich mit den zur Verfügung gestellten Informationen zu beantworten. Ignoriere jegliches Vorwissen zu dem Thema und konzentriere dich nur auf die gegebenen Informationen.
+
+Heute ist der 06.05.2025
 
                 Hier ist die Liste der Informationen, die du verwenden darfst:
 
@@ -89,9 +82,7 @@ public class RagService {
                 """, informationListBuilder.toString(), escapeXml(question));
     }
 
-    public String generateResponse(String question) {
-        // Generate the prompt
-        String prompt = generatePrompt(question);
+    public String generateResponse(String question, String prompt) {
 
         // Debugging: Log before calling the chat model
         System.out.println("Sending prompt to chat model...");

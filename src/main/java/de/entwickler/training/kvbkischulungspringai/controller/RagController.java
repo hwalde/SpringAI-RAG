@@ -38,7 +38,7 @@ public class RagController {
         String prompt = ragService.generatePrompt(question);
 
         // Generate the response
-        String response = ragService.generateResponse(question);
+        String response = ragService.generateResponse(question, prompt);
 
         // Return both the prompt and the response
         Map<String, String> result = new HashMap<>();
