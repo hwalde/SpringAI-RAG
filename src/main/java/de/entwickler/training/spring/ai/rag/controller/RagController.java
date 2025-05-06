@@ -1,6 +1,6 @@
-package de.entwickler.training.kvbkischulungspringai.controller;
+package de.entwickler.training.spring.ai.rag.controller;
 
-import de.entwickler.training.kvbkischulungspringai.service.RagService;
+import de.entwickler.training.spring.ai.rag.service.RagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;

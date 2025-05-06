@@ -1,6 +1,6 @@
-package de.entwickler.training.kvbkischulungspringai.model;
+package de.entwickler.training.spring.ai.rag.model;
 
-import de.entwickler.training.kvbkischulungspringai.config.VectorType;
+import de.entwickler.training.spring.ai.rag.config.VectorType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

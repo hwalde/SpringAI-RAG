@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>de.entwickler.training</groupId>
-    <artifactId>KVB-KI-Schulung-SpringAI</artifactId>
+    <artifactId>SpringAI-RAG</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>KVB-KI-Schulung-SpringAI</name>
-    <description>KVB-KI-Schulung-SpringAI</description>
+    <name>SpringAI-RAG</name>
+    <description>SpringAI-RAG</description>
     <url/>
     <licenses>
         <license/>

@@ -1,7 +1,7 @@
-package de.entwickler.training.kvbkischulungspringai.controller;
+package de.entwickler.training.spring.ai.rag.controller;
 
-import de.entwickler.training.kvbkischulungspringai.model.Information;
-import de.entwickler.training.kvbkischulungspringai.service.InformationService;
+import de.entwickler.training.spring.ai.rag.model.Information;
+import de.entwickler.training.spring.ai.rag.service.InformationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

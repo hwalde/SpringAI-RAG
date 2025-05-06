@@ -1,10 +1,10 @@
-package de.entwickler.training.kvbkischulungspringai;
+package de.entwickler.training.spring.ai.rag;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class KvbKiSchulungSpringAiApplicationTests {
+class SpringAiRagApplicationTests {
 
     @Test
     void contextLoads() {

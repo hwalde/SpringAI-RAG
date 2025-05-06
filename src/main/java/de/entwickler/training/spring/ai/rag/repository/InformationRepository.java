@@ -1,6 +1,6 @@
-package de.entwickler.training.kvbkischulungspringai.repository;
+package de.entwickler.training.spring.ai.rag.repository;
 
-import de.entwickler.training.kvbkischulungspringai.model.Information;
+import de.entwickler.training.spring.ai.rag.model.Information;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

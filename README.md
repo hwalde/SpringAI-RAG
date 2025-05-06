@@ -53,6 +53,35 @@ Diese Anwendung demonstriert die Implementierung eines RAG-Systems (Retrieval Au
    ```
 2. Öffnen Sie einen Browser und navigieren Sie zu `http://localhost:8080`
 
+### Test-Einrichtung
+
+Für das Testen der Anwendung werden folgende Komponenten benötigt:
+
+1. Eine separate Test-Datenbank:
+   ```sql
+   CREATE DATABASE rag_example_test;
+   ```
+
+2. PostgreSQL mit pgvector-Erweiterung (wie für die Hauptanwendung)
+
+3. Ollama mit dem konfigurierten Embedding-Modell:
+   - Stellen Sie sicher, dass Ollama läuft
+   - Das Modell `jina/jina-embeddings-v2-base-de` muss verfügbar sein
+
+4. Ein gültiger OpenAI API-Schlüssel
+
+5. Konfigurieren Sie die Test-Eigenschaften in `src/test/resources/application-test.properties`:
+   - Datenbank-Verbindung zur Test-Datenbank
+   - OpenAI API-Schlüssel
+   - Ollama-Konfiguration
+
+Die Tests umfassen:
+
+- Basis-Anwendungstests: Überprüfen, dass der Spring-Kontext korrekt geladen wird
+- Vektor-Speicher-Tests: Testen der pgvector-Integration
+- Embedding-Tests: Testen der Ollama-Embedding-Funktionalität
+- Chat-Modell-Tests: Testen der OpenAI-Chat-Integration
+
 ## Funktionalität
 
 ### Technologien
@@ -133,6 +162,49 @@ Die Anwendung bietet zwei Hauptseiten:
    - Erhält eine Antwort vom Modell
 4. Die Antwort wird geparst und dem Benutzer angezeigt, zusammen mit den verwendeten Quellen
 
+### Vektorähnlichkeitssuche
+
+Die Suche nach ähnlichen Informationen in der Datenbank ist ein zentraler Bestandteil des RAG-Ansatzes. Die Implementierung in `InformationRepository.findSimilarInformation()` verwendet PostgreSQL mit der pgvector-Erweiterung:
+
+```sql
+SELECT *,
+    0.7 * (1 - (title_embedding <=> CAST(:queryEmbeddingString AS vector))) +
+    0.3 * (1 - (content_embedding <=> CAST(:queryEmbeddingString AS vector))) AS combined_score
+FROM information
+WHERE
+    (1 - (title_embedding <=> CAST(:queryEmbeddingString AS vector))) > 0.1 OR
+    (1 - (content_embedding <=> CAST(:queryEmbeddingString AS vector))) > 0.5
+ORDER BY combined_score DESC
+LIMIT :limit
+```
+
+Diese SQL-Abfrage:
+
+1. **Berechnet Ähnlichkeitswerte**:
+   - Der Operator `<=>` ist der Cosinus-Distanz-Operator von pgvector
+   - Er gibt Werte zwischen 0 (identisch) und 2 (entgegengesetzt) zurück
+   - Die Formel `1 - (vector1 <=> vector2)` wandelt dies in einen Ähnlichkeitswert um (1 = identisch, -1 = entgegengesetzt)
+
+2. **Gewichtet die Ähnlichkeit**:
+   - 70% Gewichtung für die Titelähnlichkeit
+   - 30% Gewichtung für die Inhaltsähnlichkeit
+   - Diese Gewichtung priorisiert Treffer im Titel höher als im Inhalt
+
+3. **Filtert Ergebnisse**:
+   - Nur Informationen mit einer Titelähnlichkeit > 0.1 ODER
+   - Einer Inhaltsähnlichkeit > 0.5 werden berücksichtigt
+   - Diese Schwellenwerte verhindern, dass irrelevante Informationen zurückgegeben werden
+
+4. **Sortiert nach kombinierter Ähnlichkeit**:
+   - Die Ergebnisse werden nach dem kombinierten Ähnlichkeitswert absteigend sortiert
+   - Die relevantesten Informationen erscheinen zuerst
+
+5. **Begrenzt die Ergebnisse**:
+   - Die Anzahl der zurückgegebenen Ergebnisse wird durch den Parameter `:limit` begrenzt
+   - Standardmäßig werden die 5 ähnlichsten Informationen verwendet
+
+Diese Implementierung ermöglicht eine effiziente semantische Suche, die über einfache Schlüsselwortsuchen hinausgeht und den Kontext und die Bedeutung der Frage berücksichtigt.
+
 ## Entwicklungshinweise
 
 - Die Anwendung verwendet Flyway für Datenbankmigrationen
@@ -140,3 +212,43 @@ Die Anwendung bietet zwei Hauptseiten:
 - Die Antworten werden mit dem Modell `gpt-4.1-mini` generiert
 - Die Vektordimension ist auf 768 festgelegt
 - Die maximale Länge für Titel ist 100 Zeichen, für Inhalt 200 Zeichen
+
+### Modell-Konfiguration
+
+Die Anwendung unterstützt verschiedene KI-Modelle für Embeddings und Chat-Completion:
+
+#### Embedding-Modelle (Ollama)
+
+Die Embedding-Generierung wird über Ollama konfiguriert:
+
+```properties
+spring.ai.ollama.base-url=http://localhost:11434
+spring.ai.ollama.init.pull-model-strategy=when_missing
+spring.ai.ollama.embedding.options.model=jina/jina-embeddings-v2-base-de
+```
+
+Sie können das Embedding-Modell ändern, indem Sie ein anderes Modell in `spring.ai.ollama.embedding.options.model` angeben. Stellen Sie sicher, dass das gewählte Modell:
+- Von Ollama unterstützt wird
+- Die gleiche Vektordimension (768) erzeugt oder passen Sie die Dimension in der Datenbank an
+
+#### Chat-Modelle
+
+Die Anwendung ist so konfiguriert, dass sie zwischen verschiedenen Chat-Modell-Anbietern wechseln kann:
+
+```properties
+spring.ai.model.chat=openai
+spring.ai.openai.api-key=IhrOpenAIKey
+spring.ai.openai.chat.options.model=gpt-4.1-mini
+```
+
+Um z.B. zu Ollama für Chat-Completion zu wechseln, ändern Sie die Konfiguration:
+
+```properties
+spring.ai.model.chat=ollama
+spring.ai.ollama.chat.options.model=llama3
+```
+
+Unterstützte Chat-Modell-Anbieter:
+- OpenAI (Standard)
+- Ollama (lokale Modelle)
+- Andere Spring AI-unterstützte Anbieter (Azure OpenAI, Anthropic, etc.)

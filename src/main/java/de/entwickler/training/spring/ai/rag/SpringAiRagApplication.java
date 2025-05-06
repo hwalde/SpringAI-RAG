@@ -1,14 +1,14 @@
-package de.entwickler.training.kvbkischulungspringai;
+package de.entwickler.training.spring.ai.rag;
 
 import org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(exclude = {OpenAiEmbeddingAutoConfiguration.class})
-public class KvbKiSchulungSpringAiApplication {
+public class SpringAiRagApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(KvbKiSchulungSpringAiApplication.class, args);
+        SpringApplication.run(SpringAiRagApplication.class, args);
     }
 
 }

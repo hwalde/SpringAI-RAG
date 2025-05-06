@@ -1,6 +1,6 @@
-package de.entwickler.training.kvbkischulungspringai.service;
+package de.entwickler.training.spring.ai.rag.service;
 
-import de.entwickler.training.kvbkischulungspringai.model.Information;
+import de.entwickler.training.spring.ai.rag.model.Information;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;

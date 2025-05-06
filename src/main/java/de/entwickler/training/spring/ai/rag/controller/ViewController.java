@@ -1,4 +1,4 @@
-package de.entwickler.training.kvbkischulungspringai.controller;
+package de.entwickler.training.spring.ai.rag.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;

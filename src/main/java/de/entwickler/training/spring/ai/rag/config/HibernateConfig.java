@@ -1,4 +1,4 @@
-package de.entwickler.training.kvbkischulungspringai.config;
+package de.entwickler.training.spring.ai.rag.config;
 
 import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.PostgreSQLDialect;

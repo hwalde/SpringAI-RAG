@@ -1,7 +1,7 @@
-package de.entwickler.training.kvbkischulungspringai.service;
+package de.entwickler.training.spring.ai.rag.service;
 
-import de.entwickler.training.kvbkischulungspringai.model.Information;
-import de.entwickler.training.kvbkischulungspringai.repository.InformationRepository;
+import de.entwickler.training.spring.ai.rag.model.Information;
+import de.entwickler.training.spring.ai.rag.repository.InformationRepository;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

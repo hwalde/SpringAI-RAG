@@ -1,4 +1,4 @@
-package de.entwickler.training.kvbkischulungspringai;
+package de.entwickler.training.spring.ai.rag;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.embedding.EmbeddingModel;
