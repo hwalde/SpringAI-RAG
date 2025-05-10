@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const askButton = document.getElementById('ask-button');
     const questionError = document.getElementById('question-error');
     const queryErrorAlert = document.getElementById('query-error-alert');
+    const questionSuggestions = document.getElementById('question-suggestions');
 
     // Display area containers and content elements
     const promptDisplay = document.getElementById('prompt-display');
@@ -16,6 +17,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const sourcesContent = document.getElementById('sources-content');
 
     const QUERY_API_URL = '/api/rag/query';
+    const AUTOCOMPLETE_API_URL = '/api/rag/autocomplete';
+
+    // Load autocomplete suggestions when the page loads
+    loadAutocompleteSuggestions();
+
+    // Check for question parameter in URL (for "Ask Again" functionality from history page)
+    const urlParams = new URLSearchParams(window.location.search);
+    const questionParam = urlParams.get('question');
+    if (questionParam && questionInput) {
+        questionInput.value = questionParam;
+    }
+
+    // Add Tab key handling for autocomplete
+    if (questionInput) {
+        questionInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Tab') {
+                // Prevent default tab behavior (moving to next element)
+                event.preventDefault();
+
+                // Get the current input value
+                const currentValue = questionInput.value.trim();
+
+                // If there's no input, don't do anything
+                if (!currentValue) return;
+
+                // Find a matching suggestion
+                const matchingSuggestion = Array.from(questionSuggestions.options)
+                    .find(option => option.value.toLowerCase().startsWith(currentValue.toLowerCase()));
+
+                // If a matching suggestion is found, use it
+                if (matchingSuggestion) {
+                    questionInput.value = matchingSuggestion.value;
+                }
+            }
+        });
+    }
+
+    // Function to load autocomplete suggestions from the API
+    async function loadAutocompleteSuggestions() {
+        try {
+            const response = await fetch(AUTOCOMPLETE_API_URL);
+            if (!response.ok) {
+                console.error('Failed to fetch autocomplete suggestions:', response.status);
+                return;
+            }
+
+            const suggestions = await response.json();
+
+            // Clear existing options
+            while (questionSuggestions.firstChild) {
+                questionSuggestions.removeChild(questionSuggestions.firstChild);
+            }
+
+            // Add new options
+            suggestions.forEach(suggestion => {
+                const option = document.createElement('option');
+                option.value = suggestion;
+                questionSuggestions.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading autocomplete suggestions:', error);
+        }
+    }
 
     // Hide all result areas initially (optional, could also be done via CSS)
     [promptDisplay, rawResponseDisplay, answerDisplay, sourcesDisplay].forEach(el => el?.classList.add('hidden'));
@@ -91,6 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json(); // Expected: { "prompt": "...", "response": "..." }
         displayResults(data.prompt, data.response);
         if (queryErrorAlert) queryErrorAlert.classList.add('hidden'); // Hide error if successful
+
+        // Reload autocomplete suggestions to include the new query
+        loadAutocompleteSuggestions();
     }
 
     function displayResults(promptText, xmlResponseText) {
